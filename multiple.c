@@ -1,13 +1,5 @@
-//
-//  multiple.c
-//  LargeInteger
-//
-//  Created by 原山赳幸 on 2019/06/10.
-//  Copyright © 2019 Takeyuki. All rights reserved.
-//
-
 #include "multiple.h"
-#include "main.h"
+#include "add.h"
 
 // a + b = c, n : length of b, m : length of a, base : basempv_t
 int BasecaseMultiply(mpv_t *a, mpv_t *b, mpv_t *c, int m, int n, int base){
@@ -20,26 +12,26 @@ int BasecaseMultiply(mpv_t *a, mpv_t *b, mpv_t *c, int m, int n, int base){
     mpv_t absa, absb, chat;
     
     clearByZero(&chat);
-    if(m+n > DIGIT){
+    if(m+n > G_MAIN_DIGIT){
         printf("result is overflow!!\n");
         exit(1);
     }
     //aが正でbが負の場合
-    if(getSigna == 1 && getSignb == -1){
+    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_NEGATIVE){
         getAbs(b, &absb);
         BasecaseMultiply(a, &absb, c, m, n, base);
-        setSign(c, -1);
+        setSign(c, G_MAIN_NEGATIVE);
         return 0;
     }
     //aが負でbが正の場合
-    if(getSigna == -1 && getSignb == 1){
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_POSITIVE){
         getAbs(a, &absa);
         BasecaseMultiply(&absa, b, c, m, n, base);
-        setSign(c, -1);
+        setSign(c, G_MAIN_NEGATIVE);
         return 0;
     }
     //aが負でbも負の場合
-    if(getSigna == -1 && getSignb == -1){
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_NEGATIVE){
         getAbs(a, &absa);
         getAbs(b, &absb);
         BasecaseMultiply(&absa, &absb, c, m, n, base);

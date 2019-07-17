@@ -1,5 +1,5 @@
 SRCS = main.c add.c division.c multiple.c sub.c
-HEADERS = division.h main.h multiple.h sub.h
+HEADERS = division.h main.h multiple.h sub.h add.h
 OBJS = ${SRCS:.c=.o}
 CC = gcc #Compiler
 FC = gfortran

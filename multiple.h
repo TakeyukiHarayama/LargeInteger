@@ -1,14 +1,8 @@
-//
-//  multiple.h
-//  LargeInteger
-//
-//  Created by 原山赳幸 on 2019/06/10.
-//  Copyright © 2019 Takeyuki. All rights reserved.
-//
-
 #ifndef multiple_h
 #define multiple_h
 
 #include <stdio.h>
+#include "main.h"
 
+int BasecaseMultiply(mpv_t *a, mpv_t *b, mpv_t *c, int n, int m, int base);
 #endif /* multiple_h */

@@ -1,12 +1,6 @@
-//
-//  division.c
-//  LargeInteger
-//
-//  Created by 原山赳幸 on 2019/06/10.
-//  Copyright © 2019 Takeyuki. All rights reserved.
-//
-
 #include "division.h"
+#include "add.h"
+#include "sub.h"
 
 int nlz8(uint8_t x){
     int n = 0;
@@ -50,6 +44,7 @@ int nlz16(uint16_t x){
 
 int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int const n, int  base){
     int i, j, d;
+	int din = 0;
     bool borrowflag = false;
     uint16_t uhat, qhat, rhat, s, k;
     mpv8_t vn, un, vhat, um, uhathat;
@@ -62,7 +57,7 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
     clearByZero8_t(&um);
     clearByZero8_t(&uhathat);
     
-    if(n > m || m > DIGIT){
+    if(n > m || m > G_MAIN_DIGIT){
         printf("KNUTH division n>m error!\n");
         exit(1);
     }
@@ -79,16 +74,12 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
     
     d = nlz8(v->n[n-1]);
     vn.n[0] = (v->n[0] << d) & 0x00FF;
-	printf("vn.n[%d] %x\n", 0, vn.n[0]);
     for(i=1; i<n; i++){
         vn.n[i]=(v->n[i] << d & 0x00FF) + (v->n[i-1] >> (8-d));
-		printf("vn.n[%d] %x\n", i, vn.n[i]);
     }
     un.n[0] = (u->n[0] << d) & 0x00FF;
-	printf("un.n[%d] %x\n", 0, un.n[0]);
     for(i=1; i<m+1; i++){
         un.n[i]=(u->n[i] << d & 0x00FF) + (u->n[i-1] >> (8-d));
-		printf("un.n[%d] %x\n", i, un.n[i]);
     }
     for (j=m-n; j>=0; j--) {
         uhat = un.n[j+n] * base + un.n[j+n-1];
@@ -111,13 +102,13 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
             um.n[i] = un.n[i+j];
         }
         //uhathat <- um - vhat
-        if(sub8_t(&um, &vhat, &uhathat,0, base)){
+        if(sub8_t(&um, &vhat, &uhathat, din, base)){
             printf("KNUTH division sub error!\n");
             exit(1);
         }
-        if(getSign8_t(&uhathat) == -1){
+        if(getSign8_t(&uhathat) == G_MAIN_NEGATIVE){
             setInt8_t(&um, pow(base,n+1), base);
-            add8_t(&uhathat, &um, &uhathat, 0, base);
+            add8_t(&uhathat, &um, &uhathat, din, base);
             borrowflag = true;
         }
         q->n[j] = qhat;
@@ -125,7 +116,7 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
             q->n[j] = q->n[j] - 1;
             copympv8_t(&vn, &vhat);
             vhat.n[n-1] = 0;
-            add8_t(&uhathat, &vhat, &uhathat, 0, base);
+            add8_t(&uhathat, &vhat, &uhathat, din, base);
         }
         for(i=0; i<n+1; i++){
             un.n[i+j] = uhathat.n[i];
@@ -141,6 +132,7 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
 
 int KNUTH_div(mpv_t *u, mpv_t *v, mpv_t *q, mpv_t *r, int const m, int const n, int  base){
     int i, j, d;
+	int din = 0;
     bool borrowflag = false;
     uint32_t uhat, qhat, rhat, s, k;
     mpv_t vn, un, vhat, um, uhathat;
@@ -153,7 +145,7 @@ int KNUTH_div(mpv_t *u, mpv_t *v, mpv_t *q, mpv_t *r, int const m, int const n, 
     clearByZero(&um);
     clearByZero(&uhathat);
     
-    if(n > m || m > DIGIT){
+    if(n > m || m > G_MAIN_DIGIT){
         printf("KNUTH division n>m error!\n");
         exit(1);
     }
@@ -198,13 +190,13 @@ int KNUTH_div(mpv_t *u, mpv_t *v, mpv_t *q, mpv_t *r, int const m, int const n, 
             um.n[i] = un.n[i+j];
         }
         //uhathat <- um - vhat
-        if(sub(&um, &vhat, &uhathat,0, base)){
+        if(sub(&um, &vhat, &uhathat, din, base)){
             printf("KNUTH division sub error!\n");
             exit(1);
         }
-        if(getSign(&uhathat) == -1){
+        if(getSign(&uhathat) == G_MAIN_NEGATIVE){
             setInt(&um, pow(base,n+1), base);
-            add(&uhathat, &um, &uhathat, 0, base);
+            add(&uhathat, &um, &uhathat, din, base);
             borrowflag = true;
         }
         q->n[j] = qhat;
@@ -212,7 +204,7 @@ int KNUTH_div(mpv_t *u, mpv_t *v, mpv_t *q, mpv_t *r, int const m, int const n, 
             q->n[j] = q->n[j] - 1;
             copympv_t(&vn, &vhat);
             vhat.n[n-1] = 0;
-            add(&uhathat, &vhat, &uhathat, 0, base);
+            add(&uhathat, &vhat, &uhathat, din, base);
         }
         for(i=0; i<n+1; i++){
             un.n[i+j] = uhathat.n[i];

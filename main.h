@@ -2,17 +2,23 @@
 #define Structure_h
 #include <stdbool.h>
 #include <stdint.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <math.h>
-#define DIGIT 10
+
+#define G_MAIN_DIGIT 10
+#define G_MAIN_BASE_32 4294967296
+#define G_MAIN_BASE_16 65536
+#define G_MAIN_BASE_8 256
+#define G_MAIN_POSITIVE 1
+#define G_MAIN_NEGATIVE -1
 
 typedef struct {
-    uint16_t n[DIGIT];
+    uint16_t n[G_MAIN_DIGIT];
     bool sign;
 }mpv_t;
 
 typedef struct {
-    uint16_t n[DIGIT];
+    uint16_t n[G_MAIN_DIGIT];
     bool sign;
 }mpv8_t;
 
@@ -36,21 +42,9 @@ void copympv8_t(mpv8_t *a, mpv8_t *b);
 //多倍長の大小比較 a>b : 1, a<b : -1, エラー時は2
 int numComp8_t(mpv8_t *a, mpv8_t *b);
 int numComp(mpv_t *a, mpv_t *b);
-int KNUTH_numComp(uint16_t a[], uint16_t b[], int size);
 //int型変数のセット
-int setInt(mpv_t *a, uint64_t x, int base);
-int setInt8_t(mpv8_t *a, uint64_t x, int base);
+int setInt(mpv_t *a, int x, int base);
+int setInt8_t(mpv8_t *a, int x, int base);
 uint64_t convertnumber8_t(mpv8_t *a, int base);
 uint64_t convertnumber(mpv_t *a, int base);
-
-int add8_t(mpv8_t *a, mpv8_t *b,mpv8_t *c, int din, int base);
-int add(mpv_t *a, mpv_t *b,mpv_t *c, int din, int base);
-int sub8_t(mpv8_t *a, mpv8_t *b, mpv8_t *c, int din, int base);
-int sub(mpv_t *a, mpv_t *b, mpv_t *c, int din, int base);
-int Knuth_multiple_sub(uint16_t a[], uint16_t b[], int32_t c[], int base, int size);
-int BasecaseMultiply(mpv_t *a, mpv_t *b, mpv_t *c, int n, int m, int base);
-int nlz8(uint8_t x);
-int nlz16(uint16_t x);
-int KNUTH_div(mpv_t *u, mpv_t *v, mpv_t *q, mpv_t *r, int const m, int const n, int  base);
-int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int const n, int  base);
 #endif /* Structure_h */

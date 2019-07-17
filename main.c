@@ -1,35 +1,25 @@
-#include<stdio.h>
-#include<stdbool.h>
 #include "main.h"
-
-#define base_32 4294967296
-#define base_16 65536
-#define base_8 256
+#include "add.h"
+#include "sub.h"
+#include "multiple.h"
+#include "division.h"
 
 int main(void){
     uint32_t i, j;
     uint64_t checknumber, correctnumber;
-    mpv_t a, b, c, q, r;
 	mpv8_t aa, bb, qq, rr;
     int LengthOfa = 0;
     int LengthOfb= 0;
-    //int LengthOfc = DIGIT-1;
     int din = 0;
-    //int dout = 0;
-    int base = base_8;
-    
-    clearByZero(&a);
-    clearByZero(&b);
-    clearByZero(&c);
-    clearByZero(&q);
-    clearByZero(&r);
+    int dout = 0;
+    int base = G_MAIN_BASE_8;
 
     clearByZero8_t(&aa);
     clearByZero8_t(&bb);
     clearByZero8_t(&qq);
     clearByZero8_t(&rr);
 
-    for(i=1; i<=base_16; i++){
+    for(i=1; i<=G_MAIN_BASE_16; i++){
 		for(j=1; j<=i; j++){
 			i = 65536;
 			j = 256;
@@ -49,30 +39,12 @@ int main(void){
                 printf("r   ");
                 Displaympv8_t(&rr);
 				printf("%u / %u\n", i, j);
-                printf("correct answer is 0x%x %d\n", correctnumber, correctnumber);
+                printf("correct answer is 0x%llx %llu\n", correctnumber, correctnumber);
                 exit(1);
             }
             if((j % 5000) == 0){printf("%u / %u ok\n", i, j);};
-			//printf("%u / %u ok\n", i, j);
         }
     }
-    
-    /*
-     printf("add ");
-     //add(&a, &b, &c, din, base);
-     Displaympv_t(&c);
-     printf("sub ");
-     sub(&a, &b, &c, din, base);
-     Displaympv_t(&c);
-     BasecaseMultiply(&a, &b, &c, LengthOfa, LengthOfb, base);
-     printf("mul ");
-     Displaympv_t(&c);
-     KNUTH_div(&a, &b, &q, &r, LengthOfa, LengthOfb, base);
-     printf("divq");
-     Displaympv_t(&q);
-     printf("divr");
-     Displaympv_t(&r);
-     */
     
     return 0;
 }
@@ -81,7 +53,7 @@ int clearByZero(mpv_t *a){
     int i;
     
     a->sign = true;
-    for(i=0; i<DIGIT; i++){
+    for(i=0; i<G_MAIN_DIGIT; i++){
         a->n[i] = 0;
     }
     
@@ -92,7 +64,7 @@ int clearByZero8_t(mpv8_t *a){
     int i;
     
     a->sign = true;
-    for(i=0; i<DIGIT; i++){
+    for(i=0; i<G_MAIN_DIGIT; i++){
         a->n[i] = 0;
     }
     
@@ -107,7 +79,7 @@ int Displaympv_t(const mpv_t *a){
     }else{
         printf(" - ");
     }
-    for(i=DIGIT-1; i>=0; i--){
+    for(i=G_MAIN_DIGIT-1; i>=0; i--){
         printf(" %x ", a->n[i]);
     }
     putchar('\n');
@@ -123,7 +95,7 @@ int Displaympv8_t(const mpv8_t *a){
     }else{
         printf(" - ");
     }
-    for(i=DIGIT-1; i>=0; i--){
+    for(i=G_MAIN_DIGIT-1; i>=0; i--){
         printf(" %x ", a->n[i]);
     }
     putchar('\n');
@@ -205,7 +177,7 @@ void copympv_t(mpv_t *a, mpv_t *b)
     
     clearByZero(b);
     b->sign = a->sign;
-    for(i = 0; i < DIGIT; i++){
+    for(i = 0; i < G_MAIN_DIGIT; i++){
         b->n[i] = a->n[i];
     }
 }
@@ -215,7 +187,7 @@ void copympv8_t(mpv8_t *a, mpv8_t *b){
     
     clearByZero8_t(b);
     b->sign = a->sign;
-    for(i = 0; i < DIGIT; i++){
+    for(i = 0; i < G_MAIN_DIGIT; i++){
         b->n[i] = a->n[i];
     }
 }
@@ -234,7 +206,7 @@ int numComp8_t(mpv8_t *a, mpv8_t *b){
     }
     //a,b共に正のとき
     if(getSigna == 1 || getSignb == 1){
-        for(i = DIGIT-1; i>= 0; i--){
+        for(i = G_MAIN_DIGIT-1; i>= 0; i--){
             if(a->n[i] > b->n[i]){
                 return 1;
             }
@@ -246,7 +218,7 @@ int numComp8_t(mpv8_t *a, mpv8_t *b){
     //a,b共に負のとき
     if(getSigna == -1 || getSignb == -1){
         int i;
-        for(i = DIGIT-1; i>= 0; i--){
+        for(i = G_MAIN_DIGIT-1; i>= 0; i--){
             if(a->n[i] > b->n[i]){
                 return -1;
             }
@@ -271,7 +243,7 @@ int numComp(mpv_t *a, mpv_t *b){
     }
     //a,b共に正のとき
     if(getSigna == 1 || getSignb == 1){
-        for(i = DIGIT-1; i>= 0; i--){
+        for(i = G_MAIN_DIGIT-1; i>= 0; i--){
             if(a->n[i] > b->n[i]){
                 return 1;
             }
@@ -283,7 +255,7 @@ int numComp(mpv_t *a, mpv_t *b){
     //a,b共に負のとき
     if(getSigna == -1 || getSignb == -1){
         int i;
-        for(i = DIGIT-1; i>= 0; i--){
+        for(i = G_MAIN_DIGIT-1; i>= 0; i--){
             if(a->n[i] > b->n[i]){
                 return -1;
             }
@@ -295,25 +267,8 @@ int numComp(mpv_t *a, mpv_t *b){
     return 2;
 }
 
-//多倍長の大小比較 a>b : 1, a<b : -1, エラー時は2
-/*
- int KNUTH_numComp(uint16_t a[], uint16_t b[], int size){
- int i;
- 
- //a,b共に正のとき
- for(i = size; i>= 0; i--){
- if(a[i] > b[i]){
- return 1;
- }
- if(b[i] > a[i]){
- return -1;
- }
- }
- 
- return 2;
- }*/
 //int型変数のセット
-int setInt(mpv_t *a, uint64_t x, int base){
+int setInt(mpv_t *a, int x, int base){
     int r, i;
     int length = 0;
     clearByZero(a);
@@ -326,7 +281,7 @@ int setInt(mpv_t *a, uint64_t x, int base){
         x = labs(x);
     }
     
-    for(i = 0; i<DIGIT; i++){
+    for(i = 0; i<G_MAIN_DIGIT; i++){
         r = x % base;
         x /= base;
         if(x != 0){length++;}
@@ -335,7 +290,7 @@ int setInt(mpv_t *a, uint64_t x, int base){
     return length;
 }
 
-int setInt8_t(mpv8_t *a, uint64_t x, int base){
+int setInt8_t(mpv8_t *a, int x, int base){
     int r, i;
     int length = 0;
     clearByZero8_t(a);
@@ -348,7 +303,7 @@ int setInt8_t(mpv8_t *a, uint64_t x, int base){
         x = labs(x);
     }
     
-    for(i = 0; i<DIGIT; i++){
+    for(i = 0; i<G_MAIN_DIGIT; i++){
         r = x % base;
         x /= base;
         if(x != 0){length++;}
@@ -361,8 +316,8 @@ uint64_t convertnumber8_t(mpv8_t *a, int base){
     int i;
     uint64_t sum = 0;
     
-    for(i=0; i<DIGIT; i++){
-        sum += a->n[i] * pow(base, i);
+    for(i=0; i<G_MAIN_DIGIT; i++){
+        sum += a->n[i] * pow((double)base, (double)i);
     }
     
     return sum;
@@ -372,8 +327,8 @@ uint64_t convertnumber(mpv_t *a, int base){
     int i;
     uint64_t sum = 0;
     
-    for(i=0; i<DIGIT; i++){
-        sum += a->n[i] * pow(base, i);
+    for(i=0; i<G_MAIN_DIGIT; i++){
+        sum += a->n[i] * pow((double)base, (double)i);
     }
     
     return sum;

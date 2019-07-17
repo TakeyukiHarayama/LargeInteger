@@ -1,49 +1,43 @@
-//
-//  add.c
-//  LargeInteger
-//
-//  Created by wts86 on 2019/06/03.
-//  Copyright © 2019 Takeyuki. All rights reserved.
-//
-#include "main.h"
+#include "add.h"
+#include "sub.h"
 
 //a+b=c
 int add8_t(mpv8_t *a, mpv8_t *b,mpv8_t *c, int din, int base){
     int i = 0;
     long long s = 0;
     int d = 0;
-    int getSigna = getSign(a);
-    int getSignb = getSign(b);
+    int getSigna = getSign8_t(a);
+    int getSignb = getSign8_t(b);
     bool SignFlag = true;
     mpv8_t absab;
 
     //aが正でbが負
-    if(getSigna == 1 && getSignb == -1){
-        getAbs(b, &absab);
-        return sub(a, &absab ,c, 0, base);;
+    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_NEGATIVE){
+        getAbs8_t(b, &absab);
+        return sub8_t(a, &absab ,c, din, base);;
     }
     //aが負でbが正
-    if(getSigna == -1 && getSignb == 1){
-        getAbs(a, &absab);
-        return sub(b, &absab ,c, 0, base);
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_POSITIVE){
+        getAbs8_t(a, &absab);
+        return sub8_t(b, &absab ,c, din, base);
     }
     //aが負でbも負
-    if(getSigna == -1 && getSignb == -1){
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_NEGATIVE){
         SignFlag = false;
     }
     //aが正でbも正
-    if(getSigna == 1 && getSignb == 1){
+    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_POSITIVE){
         SignFlag = true;
     }
     
     d = din;
-    for(i=0; i<DIGIT; i++){
+    for(i=0; i<G_MAIN_DIGIT; i++){
         s = a->n[i] + b->n[i] + d;
         d = s / base;
         c->n[i] = s % base;
     }
     if(SignFlag == false){
-        setSign(c, -1);
+        setSign8_t(c, G_MAIN_NEGATIVE);
     }
     return d;
 }
@@ -58,32 +52,32 @@ int add(mpv_t *a, mpv_t *b,mpv_t *c, int din, int base){
     mpv_t absab;
 
     //aが正でbが負
-    if(getSigna == 1 && getSignb == -1){
+    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_NEGATIVE){
         getAbs(b, &absab);
-        return sub(a, &absab ,c, 0, base);;
+        return sub(a, &absab ,c, din, base);;
     }
     //aが負でbが正
-    if(getSigna == -1 && getSignb == 1){
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_POSITIVE){
         getAbs(a, &absab);
-        return sub(b, &absab ,c, 0, base);
+        return sub(b, &absab ,c, din, base);
     }
     //aが負でbも負
-    if(getSigna == -1 && getSignb == -1){
+    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_NEGATIVE){
         SignFlag = false;
     }
     //aが正でbも正
-    if(getSigna == 1 && getSignb == 1){
+    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_POSITIVE){
         SignFlag = true;
     }
     
     d = din;
-    for(i=0; i<DIGIT; i++){
+    for(i=0; i<G_MAIN_DIGIT; i++){
         s = a->n[i] + b->n[i] + d;
         d = s / base;
         c->n[i] = s % base;
     }
     if(SignFlag == false){
-        setSign(c, -1);
+        setSign(c, G_MAIN_NEGATIVE);
     }
     return d;
 }
