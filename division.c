@@ -71,7 +71,8 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
         if(r != NULL){r->n[0] = k;}
         return 0;
     }
-    
+   
+	/*Step D1********************************************************/
     d = nlz8(v->n[n-1]);
     vn.n[0] = (v->n[0] << d) & 0x00FF;
     for(i=1; i<n; i++){
@@ -81,6 +82,8 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
     for(i=1; i<m+1; i++){
         un.n[i]=(u->n[i] << d & 0x00FF) + (u->n[i-1] >> (8-d));
     }
+
+	/*Step D2 and D3*************************************************/
     for (j=m-n; j>=0; j--) {
         uhat = un.n[j+n] * base + un.n[j+n-1];
         qhat = uhat / vn.n[n-1];
@@ -91,11 +94,12 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
             rhat = rhat + vn.n[n-1];
             if(rhat >= base){break;}
         }
+	/*Step D4********************************************************/
         k=0;
         for(i=0; i<n+1; i++){
             //set vhat <- vn * qhat
             s = vn.n[i] * qhat + k;
-            if(i >= n-1){s = k;}
+            if(i >= n){s = k;}
             k = s / base;
             vhat.n[i] = s % base;
             //set um <- un
@@ -111,21 +115,22 @@ int KNUTH_div8_t(mpv8_t *u, mpv8_t *v, mpv8_t *q, mpv8_t *r, int const m, int co
             add8_t(&uhathat, &um, &uhathat, din, base);
             borrowflag = true;
         }
+	/*Step D5********************************************************/
         q->n[j] = qhat;
+	/*Step D6********************************************************/
         if(borrowflag){
             q->n[j] = q->n[j] - 1;
             copympv8_t(&vn, &vhat);
-            vhat.n[n-1] = 0;
             add8_t(&uhathat, &vhat, &uhathat, din, base);
         }
         for(i=0; i<n+1; i++){
             un.n[i+j] = uhathat.n[i];
         }
     }
-    for(i=0; i<m; i++){
-        un.n[i]=(u->n[i] >> d & 0x00FF) + (u->n[i+1] << (8-d));
+	/*Step D8********************************************************/
+    for(i=0; i<n; i++){
+        r->n[i] = ((un.n[i] >> d) & 0x00FF) | ((un.n[i+1] << (8-d)) & 0x00FF);
     }
-    un.n[0] = (u->n[0] >> d) & 0x00FF;
     
     return 0;
 }

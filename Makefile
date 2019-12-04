@@ -5,7 +5,7 @@ CC = gcc #Compiler
 FC = gfortran
 LD = gcc #Linker
 #LIBS = -lm -L/usr/local/lib -llis #Library Option.Command line option.
-LIBS = -lm #Library Option.Command line option.
+LIBS = -lm#Library Option.Command line option.
 TARGET = main #name of excutefile
 
 #Run when make no option
