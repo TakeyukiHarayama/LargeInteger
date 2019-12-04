@@ -4,9 +4,6 @@
 #include "multiple.h"
 #include "division.h"
 
-#define ADD_TEST
-#define DIVISION_TEST
-
 int main(void){
 	uint32_t i, j;
 	uint64_t checknumber, correctnumber;
