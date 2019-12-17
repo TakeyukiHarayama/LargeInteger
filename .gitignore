@@ -111,3 +111,5 @@ DerivedData/
 template
 **/main
 **/.DS_Store
+**/.vscode
+**/.gitignore

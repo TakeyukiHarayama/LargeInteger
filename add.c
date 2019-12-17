@@ -1,5 +1,6 @@
 #include "add.h"
 #include "sub.h"
+#include "sign.h"
 
 //a+b=c
 int add8_t(mpv8_t *a, mpv8_t *b,mpv8_t *c, int din, int base){
@@ -38,46 +39,6 @@ int add8_t(mpv8_t *a, mpv8_t *b,mpv8_t *c, int din, int base){
     }
     if(SignFlag == false){
         setSign8_t(c, G_MAIN_NEGATIVE);
-    }
-    return d;
-}
-
-int add(mpv_t *a, mpv_t *b,mpv_t *c, int din, int base){
-    int i = 0;
-    long long s = 0;
-    int d = 0;
-    int getSigna = getSign(a);
-    int getSignb = getSign(b);
-    bool SignFlag = true;
-    mpv_t absab;
-
-    //aが正でbが負
-    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_NEGATIVE){
-        getAbs(b, &absab);
-        return sub(a, &absab ,c, din, base);;
-    }
-    //aが負でbが正
-    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_POSITIVE){
-        getAbs(a, &absab);
-        return sub(b, &absab ,c, din, base);
-    }
-    //aが負でbも負
-    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_NEGATIVE){
-        SignFlag = false;
-    }
-    //aが正でbも正
-    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_POSITIVE){
-        SignFlag = true;
-    }
-    
-    d = din;
-    for(i=0; i<G_MAIN_DIGIT; i++){
-        s = a->n[i] + b->n[i] + d;
-        d = s / base;
-        c->n[i] = s % base;
-    }
-    if(SignFlag == false){
-        setSign(c, G_MAIN_NEGATIVE);
     }
     return d;
 }

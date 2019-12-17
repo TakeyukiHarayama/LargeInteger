@@ -1,5 +1,7 @@
 #include "sub.h"
 #include "add.h"
+#include "sign.h"
+#include "comp.h"
 
 //a-b =c
 int sub8_t(mpv8_t *a, mpv8_t *b, mpv8_t *c, int din, int base){
@@ -49,53 +51,3 @@ int sub8_t(mpv8_t *a, mpv8_t *b, mpv8_t *c, int din, int base){
     }
     return d;
 }
-
-//a-b =c
-int sub(mpv_t *a, mpv_t *b, mpv_t *c, int din, int base){
-    int i = 0;
-    long long s = 0;
-    int d = 0;
-    int getSigna = getSign(a);
-    int getSignb = getSign(b);
-    mpv_t absab;
-    
-    //aが正でbが負
-    if(getSigna == G_MAIN_POSITIVE && getSignb == G_MAIN_NEGATIVE){
-        getAbs(b, &absab);
-        add(a, &absab, c, din, base);
-        return 0;
-    }
-    //aが負でbが正
-    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_POSITIVE){
-        getAbs(a, &absab);
-        add(&absab, b, c, din, base);
-        setSign(c, G_MAIN_NEGATIVE);
-        return 0;
-    }
-    //aが負でbも負
-    if(getSigna == G_MAIN_NEGATIVE && getSignb == G_MAIN_NEGATIVE){
-        getAbs(b, &absab);
-        add(a, &absab, c, din, base);
-        return 0;
-    }
-    
-    if(numComp(a, b) == -1){
-        sub(b, a, c, din, base);
-        setSign(c, G_MAIN_NEGATIVE);
-        return 0;
-    }
-    
-    d = din;
-    for(i=0; i<G_MAIN_DIGIT; i++){
-        s = a->n[i] - b->n[i] + d;
-        if(s < 0){
-            c->n[i] = base + s;
-            d = -1;
-        }else{
-            c->n[i] = s;
-            d = 0;
-        }
-    }
-    return d;
-}
-

@@ -1,22 +1,17 @@
-SRCS = main.c add.c division.c multiple.c sub.c
-HEADERS = division.h main.h multiple.h sub.h add.h
+SRCS = main.c add.c division.c multiple.c sub.c clear.c disp.c sign.c copy.c comp.c setInt.c convert.c
+HEADERS = division.h main.h multiple.h sub.h add.h clear.h disp.h sign.h copy.h comp.h setInt.h convert.h
 OBJS = ${SRCS:.c=.o}
-CC = gcc #Compiler
-FC = gfortran
-LD = gcc #Linker
-#LIBS = -lm -L/usr/local/lib -llis #Library Option.Command line option.
-LIBS = -lm#Library Option.Command line option.
-TARGET = main #name of excutefile
+CC = gcc
+LD = gcc
+LIBS = -lm
+TARGET = main
 
-#Run when make no option
 all: $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $(TARGET) $(LIBS)
 
-#cfile -> Object
 .c.o:
 	$(CC) $(CCFLAGS) -c $<
 
-#Object -> Headerfile
 $(OBJS): $(HEADERS) Makefile
 
 clean:
